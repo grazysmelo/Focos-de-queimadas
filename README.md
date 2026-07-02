@@ -1,1 +1,0 @@
-# Focos-de-queimadas
