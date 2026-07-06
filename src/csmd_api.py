@@ -2,50 +2,50 @@ import os
 import sys
 import requests
 import boto3
-import json
-import datetime
+from datetime import datetime
 
+def csmd_api():
+    # 1. Configurações de Segurança e Ambiente
+    map_key = os.getenv("NASA_MAP_KEY")
+    bucket_name = os.getenv("AWS_DATA_LAKE_BUCKET", "meu-data-lake-queimadas-2026")
 
-def exec_api(data_exec):
-    #airflow passa uma string "YYYY-MM-DD" como arg
+    if not map_key:
+        raise ValueError("ERRO: A variável de ambiente NASA_MAP_KEY não foi definida.")
 
-    url = "https://queimadas.dgi.inpe.br/api/focos/"
-    parametros = {
-        "pais_id": 33,
-        "inicio": data_exec,
-        "fim": data_exec
-    }
+    # 2. URL que funcionou no seu teste (Bounding Box do Brasil e América do Sul)
+    # Traz os focos do último 1 dia
+    url = f"https://firms.modaps.eosdis.nasa.gov/api/area/csv/{map_key}/VIIRS_SNPP_NRT/-74,-34,-34,6/1"
 
-    #passagem de parâmetros dinâmicos
-    response = requests.get(url, params=parametros)
+    print(f"[{datetime.now()}] Coletando dados da NASA FIRMS via Bounding Box...")
 
-    print(f"Iniciando o processamento da remessa do dia: {data_exec}")
+    try:
+        response = requests.get(url, timeout=30)
+        response.raise_for_status()
+        dados_csv = response.text
+    except requests.exceptions.RequestException as e:
+        print(f"Erro ao conectar na API da NASA: {e}")
+        sys.exit(1)
 
-    if response.status_code != 200:
-       raise Exception (f"Erro: {response.status_code}")
+    # 3. Particionamento dinâmico baseado na data de hoje para automação diária
+    hoje = datetime.today()
+    ano = hoje.strftime('%Y')
+    mes = hoje.strftime('%m')
+    dia = hoje.strftime('%d')
 
-    json_data = response.json()
+    s3_key = f"bronze/nasa_firms/ano={ano}/mes={mes}/dia={dia}/focos_{ano}_{mes}_{dia}.csv"
 
-    #Particionamento para maior controle no s3
-    ano, mes, dia = data_exec.split("-")
-    s3_key = f"bronze/ano={ano}/mes={mes}/dia={dia}/focos_{data_exec}.json"
-
+    # 4. Upload do texto do CSV direto para o S3
     s3_client = boto3.client('s3')
-    bucket_name = os.getenv("AWS_BRONZE_BUCKET", "BUCKET_QUEIMADAS_BRONZE")
+    try:
+        s3_client.put_object(
+            Bucket=bucket_name,
+            Key=s3_key,
+            Body=dados_csv.encode('utf-8')
+        )
+        print(f"[{datetime.now()}] CSV salvo com sucesso no S3: {s3_key}")
+    except Exception as e:
+        print(f"Erro ao fazer upload para o S3: {e}")
+        sys.exit(1)
 
-    #Conversão para string e envio direto para s3 sem salvamento local
-    s3_client.put_object(
-        Bucket=bucket_name,
-        Key=s3_key,
-        Body=json.dumps(json_data)
-    )
-    print(f"Dados salvos no s3: {s3_key}")
-
-#Processo para receber args pela linha de comando. Caso não possua args será utilizado a data atual de execução
 if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        data_rodada = sys.argv[1]
-    else:
-        data_rodada = datetime.today().strftime('%Y-%m-%d')
-
-exec_api(data_rodada)
+    csmd_api()

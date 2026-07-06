@@ -13,17 +13,17 @@ default_args = {
 
 # usando 'with' para criar o container da dag
 with DAG(
-        dag_id='pipeline_inpe_queimadas',
+        dag_id='pipeline_nasa_queimadas',
         default_args=default_args,
         description='Pipeline de focos de incêndio',
         schedule_interval='@daily',
         catchup=True,
         max_active_runs=1,
-        tags=['etl', 'inpe']
+        tags=['etl', 'nasa']
 ) as dag:
 
-    ingestao_api_inpe = BashOperator(
-        task_id='ingestao_api_inpe',
+    ingestao_api_nasa = BashOperator(
+        task_id='ingestao_api_nasa',
         bash_command='cd airflow/dags/dag_queimadas_pipeline.py'
     )
 
@@ -34,7 +34,7 @@ with DAG(
         bash_command='python opt/airflow/src/csmd_api.py {{ ds }}'
         )
 
-    ingestao_api_inpe >> transformacao_dbt
+    ingestao_api_nasa >> transformacao_dbt
 
 
 
