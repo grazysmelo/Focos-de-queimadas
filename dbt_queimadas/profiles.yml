@@ -1,0 +1,11 @@
+queimadas_profile:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: 'queimadas.duckdb'
+      extension:
+        - httpfs
+        - aws
+      settings:
+        s3_region: 'us-east-1'

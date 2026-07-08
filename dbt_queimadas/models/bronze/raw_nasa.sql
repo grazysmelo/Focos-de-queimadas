@@ -1,6 +1,6 @@
 {{ config(materialized='view') }}
 
-WITH raw_csv AS (
+WITH raw AS (
     SELECT *
     FROM read_csv_auto('s3://{{ var("meu-data-lake-queimadas-nasa-2026") }}/bronze/nasa_firms/ano=*/*/*/*.csv', filename=true)
 )
@@ -20,4 +20,4 @@ SELECT
     bright_ti5 AS temperatura_brilho_i5,
     frp AS poder_radiativo_fogo,
     daynight AS periodo_dia_ou_noite
-FROM raw_csv
+FROM raw
