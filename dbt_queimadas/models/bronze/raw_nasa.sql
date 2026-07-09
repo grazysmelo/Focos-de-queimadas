@@ -2,7 +2,7 @@
 
 WITH raw AS (
     SELECT *
-    FROM read_csv_auto('s3://{{ var("meu-data-lake-queimadas-nasa-2026") }}/bronze/nasa_firms/ano=*/*/*/*.csv', filename=true)
+    FROM read_csv_auto('s3://{{ var("bucket_name") }}/bronze/nasa_firms/ano=*/*/*/*.csv', filename=true)
 )
 
 SELECT

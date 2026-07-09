@@ -15,3 +15,9 @@ variable "enviroment" {
   type        = string
   default     = "dev"
 }
+
+variable "NASA_MAP_KEY" {
+  description = "Chave de segurança da API NASA"
+  type        = string
+  sensitive   = true
+}

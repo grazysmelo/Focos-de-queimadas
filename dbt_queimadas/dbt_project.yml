@@ -18,12 +18,10 @@ models:
   dbt_queimadas:
     # Dados brutos
     bronze:
-      nasa_firms:
         +materialized: view
 
     # Dados serão tratados
     silver:
-      nasa_firms:
         +materialized: table
 
     # Base para criar os modelos dimensionais (Fatos e Dimensões)

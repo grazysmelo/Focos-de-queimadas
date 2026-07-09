@@ -1,6 +1,6 @@
 {{ config(materialized='table') }}
 
-WITH silver(
+WITH silver AS(
     SELECT * FROM {{ ref('stg_nasa') }}
     ),
 
@@ -13,7 +13,7 @@ fato_final AS (
         s.id_foco,
         d.sk_satelite,
         s.data_hora_brasilia,
-        CAST(strftime(data_hora_brasilia, '%Y-%m-%d') AS INT) AS fk_data,
+        CAST(strftime(s.data_hora_brasilia, '%Y%m%d') AS INT) AS fk_data,
         s.latitude,
         s.longitude,
         s.intensidade_frp_mw AS intensidade_fogo_mw,

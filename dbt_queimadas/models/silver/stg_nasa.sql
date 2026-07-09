@@ -14,20 +14,20 @@ cleaned AS (
 
         -- Tratativa do horario de captura
         CAST(
-            to_timestamp(
+            strptime(
                 concat(
                     CAST(data_captura_original AS VARCHAR),
                     ' ',
                     lpad(CAST (hora_captura_original AS VARCHAR), 4, '0')
                 ),
-                'YYYY-MM-DD HH24MI'
+                '%Y-%m-%d %H%M'
                 ) AS TIMESTAMP
             ) - INTERVAL '3' HOUR AS data_hora_brasilia,
 
         -- Métricas
         CAST(temperatura_brilho_i4 AS DOUBLE) AS temperatura_brilho_i4_k,
         CAST(temperatura_brilho_i5 AS DOUBLE) AS temperatura_brilho_i5_k,
-        CAST(poder_radiativo_fogo AS BOUBLE) AS intensidade_frp_mw,
+        CAST(poder_radiativo_fogo AS DOUBLE) AS intensidade_frp_mw,
 
         -- Padronização dos textos
         UPPER(TRIM(CAST(nivel_confianca AS VARCHAR))) AS status_confianca,
@@ -39,7 +39,7 @@ cleaned AS (
         END AS periodo_dia,
 
         UPPER(TRIM(CAST(instrumento AS VARCHAR))) AS instrumento_sensor,
-        UPPER(TRIM(CAST(codigo_satelite AS VARCHAR))) AS satelite_origem,
+        UPPER(TRIM(CAST(codigo_satelite AS VARCHAR))) AS satelite_origem
 
     FROM staging
         WHERE
