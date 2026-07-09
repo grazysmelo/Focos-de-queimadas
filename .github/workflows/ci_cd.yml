@@ -34,7 +34,7 @@ jobs:
 
       - name: Run API Ingestion Script (Upload to S3 Bronze)
         env:
-          NASA_API_KEY: ${{ secrets.NASA_MAP_KEY }}
+          NASA_MAP_KEY: ${{ secrets.NASA_MAP_KEY }}
         run: |
           python src/csmd_api.py
 
