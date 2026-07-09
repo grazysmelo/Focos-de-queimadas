@@ -12,7 +12,7 @@ macro-paths: ["macros"]
 
 
 vars:
-  bucket_name: "meu-data-lake-queimadas-nasa-2026"
+  bucket_name: "meu-data-lake-queimadas-2026"
 
 models:
   dbt_queimadas:
