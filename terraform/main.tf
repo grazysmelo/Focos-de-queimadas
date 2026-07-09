@@ -32,17 +32,17 @@ resource "aws_s3_bucket_public_access_block" "block_public" {
   restrict_public_buckets = true
 }
 
-resource "aws_s3_bucket" "folder_bronze" {
+resource "aws_s3_object" "folder_bronze" {
   bucket = aws_s3_bucket.data_lake.id
   key = "bronze/nasa_firms/"
 }
 
-resource "aws_s3_bucket" "folder_silver" {
+resource "aws_s3_object" "folder_silver" {
   bucket = aws_s3_bucket.data_lake.id
   key = "silver/"
 }
 
-resource "aws_s3_bucket" "folder_gold" {
+resource "aws_s3_object" "folder_gold" {
   bucket = aws_s3_bucket.data_lake.id
   key = "gold/"
 }
