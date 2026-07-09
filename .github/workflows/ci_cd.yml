@@ -35,6 +35,7 @@ jobs:
       - name: Run API Ingestion Script (Upload to S3 Bronze)
         env:
           NASA_MAP_KEY: ${{ secrets.NASA_MAP_KEY }}
+          AWS_DATA_LAKE_BUCKET: "meu-data-lake-queimadas-2026"
         run: |
           python src/csmd_api.py
 
