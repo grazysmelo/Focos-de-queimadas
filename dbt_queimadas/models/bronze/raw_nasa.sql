@@ -1,10 +1,5 @@
 {{ config(materialized='view') }}
 
-WITH raw AS (
-    SELECT *
-    FROM read_csv_auto('s3://{{ var("bucket_name") }}/bronze/nasa_firms/ano=*/*/*/*.csv', filename=true)
-)
-
 SELECT
     latitude,
     longitude,
@@ -20,4 +15,4 @@ SELECT
     bright_ti5 AS temperatura_brilho_i5,
     frp AS poder_radiativo_fogo,
     daynight AS periodo_dia_ou_noite
-FROM raw
+FROM{{ source('s3_bronze', 'raw_nasa') }}

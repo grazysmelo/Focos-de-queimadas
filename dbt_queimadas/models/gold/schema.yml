@@ -1,0 +1,33 @@
+version: 2
+
+models:
+  - name: dim_satelite
+    description: "Tabela de dimensão com as tecnologias dos satélites da NASA."
+    columns:
+      - name: sk_satelite
+        description: "Chave primária substituta (Hash MD5)."
+        tests:
+          - unique   # Garante que não existem satélites duplicados nesta tabela
+          - not_null # Garante que a chave primária nunca venha vazia
+
+  - name: fato_focos_incendio
+    description: "Tabela fato que registra cada foco de incêndio detectado e suas métricas."
+    columns:
+      - name: id_foco
+        description: "Chave primária do foco de calor ativo."
+        tests:
+          - unique
+          - not_null
+
+      - name: sk_satelite
+        description: "Chave estrangeira conectada à tabela dim_satelite."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_satelite')
+              field: sk_satelite # Teste de integridade referencial (Garante que a chave existe na dimensão)
+
+      - name: intensidade_fogo_mw
+        description: "Poder radiativo do fogo (FRP) medido em Megawatts."
+        tests:
+          - not_null
