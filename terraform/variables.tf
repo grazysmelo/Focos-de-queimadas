@@ -7,7 +7,7 @@ variable "aws_region" {
 variable "bucket_name" {
   description = "Nome do bucket"
   type        = string
-  default     = "meu-data-lake-queimadas-nasa-2026"
+  default     = "meu-data-lake-queimadas-2026"
 }
 
 variable "enviroment" {

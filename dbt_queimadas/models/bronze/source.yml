@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: s3_bronze
+    description: "Dados brutos de queimadas armazenados no S3"
+    loader: python_script
+    tables:
+      - name: raw_nasa
+        description: "Focos de calor brutos da API NASA FIRMS"
+        external: "s3://projeto-queimadas-lakehouse-dev/bronze/nasa_firms/*/*/*/*.csv"
