@@ -7,4 +7,6 @@ sources:
     tables:
       - name: raw_nasa
         description: "Focos de calor brutos da API NASA FIRMS"
-        external: "s3://meu-data-lake-queimadas-2026/bronze/nasa_firms/*/*/*/*.csv"
+        config:
+          external:
+            location: "s3://meu-data-lake-queimadas-2026/bronze/nasa_firms/*/*/*/*.csv"
