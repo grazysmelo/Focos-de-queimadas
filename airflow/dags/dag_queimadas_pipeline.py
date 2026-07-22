@@ -1,4 +1,5 @@
-from airflow.providers.standard.operators.bash import BashOperator
+from airflow.providers.amazon.aws.operators.emr import EmrServerlessStartJobOperator
+from airflow.providers.amazon.aws.operators.athena import AthenaOperator
 
 from airflow import DAG
 from datetime import datetime, timedelta
@@ -17,24 +18,33 @@ with DAG(
         default_args=default_args,
         description='Pipeline de focos de incêndio',
         schedule_interval='@daily',
-        catchup=True,
-        max_active_runs=1,
+        catchup=False,
         tags=['etl', 'nasa']
 ) as dag:
 
-    ingestao_api_nasa = BashOperator(
-        task_id='ingestao_api_nasa',
-        bash_command='cd airflow/dags/dag_queimadas_pipeline.py'
+    process_silver=EmrServerlessStartJobOperator(
+        task_id='process_raw_to_silver',
+        application_id='YOUR_EMR_APPLICATION_ID',
+        execution_role_arn='YOUR_EMR_ROLE_ARN',
+        job_driver={
+            'sparkSubmit': {
+                'entryPoint': 's3://seu-bucket-scripts/scripts/silver_processing.py',
+            }
+        }
     )
 
-    transformacao_dbt = BashOperator(
-        task_id='transformacao_dbt',
-    # {{ ds }} transforma a data para o formato que a função exec_api espera no bash. ex. 'python opt/airflow/src/csmd_api.py 2026-10-06'
-    # o dbt lê a query com os tratamentos, entende as dependências e atualiza o banco com os dados coletados.
-        bash_command='python opt/airflow/src/csmd_api.py {{ ds }}'
-        )
 
-    ingestao_api_nasa >> transformacao_dbt
+    processo_gold=EmrServerlessStartJobOperator(
+
+    )
+
+
+    processo_gold_repair=AthenaOperator(
+
+    )
+
+
+    processo_silver >> processo_gold >> processo_gold_repair
 
 
 
