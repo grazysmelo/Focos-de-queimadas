@@ -12,6 +12,7 @@ macro-paths: ["macros"]
 
 on-run-start:
   - "create schema if not exists s3_bronze;"
+  - "CREATE OR REPLACE VIEW s3_bronze.raw_nasa AS SELECT * FROM read_csv_auto('s3://meu-data-lake-queimadas-2026/bronze/nasa_firms/*/*/*/*.csv');"
 
 vars:
   bucket_name: "meu-data-lake-queimadas-2026"
