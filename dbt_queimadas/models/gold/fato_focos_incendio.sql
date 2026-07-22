@@ -1,6 +1,6 @@
 {{ config(
-    materialized='table',
-    external_location='fato_focos_incendio.parquet'
+    materialized='external',
+    location='s3://meu-data-lake-queimadas-2026/gold/fato_focos_incendio.parquet'
 ) }}
 
 WITH silver AS(
