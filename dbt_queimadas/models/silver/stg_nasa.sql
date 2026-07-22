@@ -1,6 +1,6 @@
 {{ config(
     materialized='table',
-    external_location='s3://meu-data-lake-queimadas-2026/silver/stg_nasa_queimadas.parquet'
+    external_location='stg_nasa_queimadas.parquet'
 ) }}
 
 WITH staging AS (

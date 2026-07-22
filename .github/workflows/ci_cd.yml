@@ -11,7 +11,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Faz o download do código do repositório
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -69,6 +68,12 @@ jobs:
         run: |
           cd dbt_queimadas
           dbt run
+
+      - name: Upload Parquet Files to S3 (Silver and Gold)
+        run: |
+          cd dbt_queimadas
+          aws s3 cp stg_nasa_queimadas.parquet s3://meu-data-lake-queimadas-2026/silver/stg_nasa_queimadas.parquet
+          aws s3 cp fato_focos_incendio.parquet s3://meu-data-lake-queimadas-2026/gold/fato_focos_incendio.parquet
 
       - name: Run dbt Quality Tests
         env:
