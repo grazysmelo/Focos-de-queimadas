@@ -15,4 +15,4 @@ SELECT
     bright_ti5 AS temperatura_brilho_i5,
     frp AS poder_radiativo_fogo,
     daynight AS periodo_dia_ou_noite
-FROM{{ source('s3_bronze', 'raw_nasa') }}
+FROM {{ source('s3_bronze', 'raw_nasa') }}
