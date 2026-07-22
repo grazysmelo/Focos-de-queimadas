@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: stg_nasa_queimadas
+  - name: stg_nasa
     description: "Tabela Silver com dados limpos e tipados da NASA FIRMS"
     columns:
       - name: latitude
@@ -11,14 +11,13 @@ models:
         tests:
           - not_null
 
-  - name: fct_focos_queimadas
+  - name: fato_final
     description: "Tabela Fato Gold de focos de calor processados"
     columns:
-      - name: sk_foco
+      - name: id_foco
         tests:
           - unique
           - not_null
-      - name: severidade_fogo
+      - name: intensidade_fogo_mw
         tests:
-          - accepted_values:
-              values: ['Baixa', 'Média', 'Alta', 'Indeterminada']
+          - not_null

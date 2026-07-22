@@ -4,19 +4,18 @@ models:
   - name: fato_focos_incendio
     description: "Tabela Fato analítica de focos de incêndio processados"
     columns:
-      - name: sk_foco
+      - name: id_foco
         description: "Chave substituta única gerada via MD5 para cada foco"
         tests:
           - unique
           - not_null
 
-      - name: severidade_fogo
+      - name: intensidade_fogo_mw
         description: "Classificação da severidade baseada no poder radiativo"
         tests:
-          - accepted_values:
-              values: ['Baixa', 'Média', 'Alta', 'Indeterminada']
+          - not_null
 
-      - name: data_captura
+      - name: data_hora_brasilia
         description: "Data em que o foco foi capturado pelo satélite"
         tests:
           - not_null
