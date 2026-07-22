@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Faz o download do código do repositório para a máquina virtual do GitHub
+      # 1. Faz o download do código do repositório
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -36,10 +36,12 @@ jobs:
         env:
           NASA_MAP_KEY: ${{ secrets.NASA_MAP_KEY }}
           AWS_DATA_LAKE_BUCKET: "meu-data-lake-queimadas-2026"
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: "us-east-1"
         run: |
           python src/csmd_api.py
 
-      # 6. Configura o perfil do dbt para usar o DuckDB habilitando o plugin do S3
       - name: Setup dbt Profile with S3 support
         run: |
           mkdir -p ~/.dbt
@@ -50,16 +52,29 @@ jobs:
               dev:
                 type: duckdb
                 path: 'queimadas.duckdb'
-                plugins:
-                  - s3
+                extensions:
+                  - httpfs
+                  - aws
+                settings:
+                  s3_region: 'us-east-1'
+                  s3_access_key_id: \"${{ secrets.AWS_ACCESS_KEY_ID }}\"
+                  s3_secret_access_key: \"${{ secrets.AWS_SECRET_ACCESS_KEY }}\"
           " > ~/.dbt/profiles.yml
 
       - name: Execute dbt Models
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: "us-east-1"
         run: |
           cd dbt_queimadas
           dbt run
 
       - name: Run dbt Quality Tests
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: "us-east-1"
         run: |
           cd dbt_queimadas
           dbt test
