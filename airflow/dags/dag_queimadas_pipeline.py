@@ -1,6 +1,4 @@
-from airflow.providers.amazon.aws.operators.emr import EmrServerlessStartJobOperator
-from airflow.providers.amazon.aws.operators.athena import AthenaOperator
-
+from airflow.operators.bash import BashOperator
 from airflow import DAG
 from datetime import datetime, timedelta
 
@@ -17,34 +15,22 @@ with DAG(
         dag_id='pipeline_nasa_queimadas',
         default_args=default_args,
         description='Pipeline de focos de incêndio',
-        schedule_interval='@daily',
+        schedule_interval='0 6 * * *',
         catchup=False,
         tags=['etl', 'nasa']
 ) as dag:
 
-    process_silver=EmrServerlessStartJobOperator(
-        task_id='process_raw_to_silver',
-        application_id='YOUR_EMR_APPLICATION_ID',
-        execution_role_arn='YOUR_EMR_ROLE_ARN',
-        job_driver={
-            'sparkSubmit': {
-                'entryPoint': 's3://seu-bucket-scripts/scripts/silver_processing.py',
-            }
-        }
+    task_ingestao_api = BashOperator(
+        task_id='ingestao_nasa_api',
+        bash_command='python /path/to/project/src/csmd_api.py'
     )
 
-
-    processo_gold=EmrServerlessStartJobOperator(
-
+    task_dbt_run = BashOperator(
+        task_id='dbt_transformacao_lakehouse',
+        bash_command='cd /path/to/project/dbt_queimadas && dbt run'
     )
 
-
-    processo_gold_repair=AthenaOperator(
-
-    )
-
-
-    processo_silver >> processo_gold >> processo_gold_repair
+    task_ingestao_api >> task_dbt_run
 
 
 

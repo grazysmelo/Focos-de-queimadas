@@ -1,4 +1,7 @@
-{{ config(materialized='table') }}
+{{ config(
+    materialized='table',
+    external_location='s3://meu-data-lake-queimadas-2026/gold/fato_focos_incendio.parquet'
+) }}
 
 WITH silver AS(
     SELECT * FROM {{ ref('stg_nasa') }}

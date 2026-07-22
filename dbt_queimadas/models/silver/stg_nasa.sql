@@ -1,4 +1,7 @@
-{{ config(materialized='table') }}
+{{ config(
+    materialized='table',
+    external_location='s3://meu-data-lake-queimadas-2026/silver/stg_nasa_queimadas.parquet'
+) }}
 
 WITH staging AS (
     SELECT * FROM {{ ref('raw_nasa') }}
