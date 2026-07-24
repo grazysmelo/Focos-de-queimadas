@@ -1,3 +1,3 @@
 # Focos de Queimadas
 
-![](arquitetura.png)
+![](images/arquitetura.png)
